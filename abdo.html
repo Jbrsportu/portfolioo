@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abdo - Video Editor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <!-- Add preconnect hints for faster video loading -->
+    <link rel="preconnect" href="https://www.youtube.com">
+    <link rel="preconnect" href="https://www.youtube-nocookie.com">
+    <link rel="dns-prefetch" href="https://www.youtube.com">
+    <link rel="dns-prefetch" href="https://www.youtube-nocookie.com">
+    <style>
+        :root {
+            --primary: #4338ca;
+            --primary-light: #6366f1;
+            --primary-dark: #312e81;
+            --accent: #d97706;
+            --text-primary: #f1f5f9;
+            --text-secondary: #64748b;
+            --text-muted: #475569;
+            --bg-primary: #020617;
+            --bg-secondary: #0f172a;
+            --bg-tertiary: #1e293b;
+            --border: #334155;
+            --glass: rgba(2, 6, 23, 0.9);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background image */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://res.cloudinary.com/dwrsbbvnq/image/upload/v1748204068/joincobalt.com__ref_landingfolio_duoyho.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* Dark overlay for better text readability */
+        .bg-gradient::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(2, 6, 23, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+            z-index: 1;
+        }/* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            background: var(--glass);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .header.scrolled {
+            backdrop-filter: blur(30px);
+            background: rgba(2, 6, 23, 0.98);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-light);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 2rem 0 2rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(67, 56, 202, 0.4);
+        }
+
+        .btn-secondary {
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            background: rgba(67, 56, 202, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Projects Section */
+        .projects {
+            padding: 6rem 2rem;
+        }
+
+        .projects-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            transform: translateZ(0);
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px) translateZ(0);
+            border-color: var(--primary);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            overflow: hidden;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateZ(0);
+            will-change: transform;
+        }
+
+        .project-card:hover .video-container iframe {
+            transform: scale(1.05);
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            padding: 6rem 2rem;
+            background: var(--bg-secondary);
+        }
+
+        .testimonials-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .testimonial-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-top: 3rem;
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .testimonial-image {
+            width: 100%;
+            max-width: 1200px;
+            height: auto;
+            border-radius: 12px;
+            margin: 0 auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-size: 1.125rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 3rem 0;
+        }
+
+        .social-link {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(67, 56, 202, 0.2);
+        }
+
+        .footer-copyright {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) translateZ(0);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) translateZ(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Starting Is Simple Section */
+        .starting-simple {
+            padding: 4rem 2rem;
+            background: var(--bg-primary);
+        }
+
+        .starting-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .spotlight-card {
+            position: relative;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .spotlight-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle 400px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(67, 56, 202, 0.15), transparent 80%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .spotlight-card:hover::before {
+            opacity: 1;
+        }
+
+        .spotlight-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(99, 102, 241, 0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .spotlight-card:hover::after {
+            opacity: 1;
+        }
+
+        .spotlight-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .spotlight-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .steps-list {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .step-icon {
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        .step-icon::after {
+            content: '✓';
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .step-text {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .spotlight-description {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin-top: 1.5rem;
+        }
+
+        /* Reduce spacing between sections */
+        .projects {
+            padding: 4rem 2rem;
+        }
+
+        .testimonials {
+            padding: 4rem 2rem;
+            background: var(--bg-primary);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none; /* Hides the nav menu on smaller screens */
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr; /* Stacks project cards vertically */
+            }
+            
+            .cta-group {
+                flex-direction: column; /* Stacks CTA buttons vertically */
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px; /* Limits button width */
+                justify-content: center;
+            }
+
+            .starting-simple {
+                padding: 3rem 1rem;
+            }
+
+            .spotlight-card {
+                padding: 2rem;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-light);
+        }
+
+        /* Vertical Video Cards */
+        .video-container-vertical {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 177.78%; /* 9:16 Aspect Ratio */
+            overflow: hidden;
+        }
+
+        .video-container-vertical iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover .video-container-vertical iframe {
+            transform: scale(1.05);
+        }
+
+        /* Add loading placeholder for videos */
+        .video-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-secondary);
+            z-index: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-container.loaded::before {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    
+    <header class="header" id="header">
+        <div class="nav-container">
+            <div class="logo">ABDO</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home" class="nav-link">Home</a></li>
+                    <li><a href="#projects" class="nav-link">Work</a></li>
+                    <li><a href="#testimonials" class="nav-link">Reviews</a></li>
+                    <li><a href="#starting" class="nav-link">Process</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <div class="pulse-dot"></div>
+                Available for new projects
+            </div>
+            <h1 class="hero-title">Crafting Visual Stories</h1>
+            <p class="hero-subtitle">
+                I transform raw footage into compelling narratives that captivate audiences 
+                and elevate your brand through the art of video editing.
+            </p>
+            <div class="cta-group">
+                <a href="#contact" class="btn btn-primary">
+                    Let's Work Together
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="#projects" class="btn btn-secondary">
+                    View My Work
+                    <i class="fas fa-play"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="projects">
+        <div class="projects-container">
+            <div class="section-header">
+                <h2 class="section-title">My Work</h2>
+                <p class="section-subtitle">
+               </p>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="video-container">
+                        <iframe loading="lazy" 
+                                src="https://www.youtube.com/embed/OvwYLLlydEw?loading=lazy&rel=0" 
+                                title="Featured Project 1"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen
+                                loading="lazy"
+                                importance="low"
+                                fetchpriority="low"></iframe>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="video-container">
+                        <iframe loading="lazy" src="https://www.youtube.com/embed/g0UGITZtZb8" 
+                                title="Featured Project 2"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="video-container">
+                        <iframe loading="lazy" src="https://www.youtube.com/embed/Yhng57vpeqs" 
+                                title="Featured Project 3"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="video-container">
+                        <iframe loading="lazy" src="https://www.youtube.com/embed/UAlDFqhv-oI" 
+                                title="Featured Project 4"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="section-header" style="margin-top:3rem;">
+                <h3 class="section-title" style="font-size:2rem;"></h3>
+            </div>
+            <div class="projects-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="project-card">
+                    <div class="video-container-vertical">
+                        <iframe loading="lazy" src="https://www.youtube.com/embed/MT9PzYCFHKg"
+                                title="Shorts Project 1"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="video-container-vertical">
+                        <iframe loading="lazy" src="https://www.youtube.com/embed/vXZgwGHm90Y"
+                                title="Shorts Project 2"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="video-container-vertical">
+                        <iframe loading="lazy" src="https://www.youtube.com/embed/ASrhnWuFqrE"
+                                title="Shorts Project 3"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="video-container-vertical">
+                        <iframe loading="lazy" src="https://www.youtube.com/embed/hvXtnXC0fsg"
+                                title="Shorts Project 4"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="video-container-vertical">
+                        <iframe loading="lazy" src="https://www.youtube.com/embed/LgKaIf_T2-Q"
+                                title="Shorts Project 5"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="video-container-vertical">
+                        <iframe loading="lazy" src="https://www.youtube.com/embed/OmitZQbcYd4"
+                                title="Shorts Project 6"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="testimonials">
+        <div class="testimonials-container">
+            <div class="section-header">
+                <h2 class="section-title">Testimonials
+                </h2>
+                <p class="section-subtitle">
+                </p>
+            </div>
+            <div class="testimonial-card">
+                <img loading="lazy" src="https://res.cloudinary.com/dwrsbbvnq/image/upload/t_hrtyh/v1748369039/Screenshot_2025-05-27_182558gh_xietgv.png" 
+                     alt="Client Testimonial Feedback" 
+                     class="testimonial-image">
+            </div>
+        </div>
+    </section>
+
+    <section id="starting" class="starting-simple">
+        <div class="starting-container">
+            <div class="section-header">
+                <h2 class="section-title">Starting Is Simple</h2>
+                <p class="section-subtitle">
+                    Follow these easy steps to get your video project started
+                </p>
+            </div>
+            <div class="spotlight-card" id="spotlightCard">
+                <div class="spotlight-content">
+                    <p class="spotlight-title">
+                        Video Editing Process
+                    </p>
+                    <div class="text-neutral-200">
+                        Follow these steps to get your project completed:
+                        <ul class="steps-list">
+                            <li class="step-item">
+                                <div class="step-icon"></div>
+                                <p class="step-text">Share your raw footage and vision</p>
+                            </li>
+                            <li class="step-item">
+                                <div class="step-icon"></div>
+                                <p class="step-text">Discuss style and requirements</p>
+                            </li>
+                            <li class="step-item">
+                                <div class="step-icon"></div>
+                                <p class="step-text">Review drafts and provide feedback</p>
+                            </li>
+                            <li class="step-item">
+                                <div class="step-icon"></div>
+                                <p class="step-text">Receive your polished final video</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <p class="spotlight-description">
+                        Professional video editing that transforms your content into engaging stories. 
+                        Let's work together to create something amazing.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="footer">
+        <div class="footer-container">
+            <h2 class="footer-title">Let's Create Something Amazing</h2>
+            <p class="footer-subtitle">
+                Ready to bring your vision to life? Let's discuss your next video project.
+            </p>
+            
+            <a href="https://x.com/ms__edit" target="_blank" class="btn btn-primary">
+                Get In Touch
+                <i class="fas fa-external-link-alt"></i>
+            </a>
+
+            <div class="social-links">
+                <a href="https://x.com/ms__edit" target="_blank" class="social-link" aria-label="Twitter Profile">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://www.instagram.com/ms__edit2.0/" target="_blank" class="social-link" aria-label="Instagram Profile">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://www.youtube.com/channel/UC4y0KRjsLafELUObF1fcrig" target="_blank" class="social-link" aria-label="YouTube Channel">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="#" class="social-link" aria-label="LinkedIn Profile">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </div>
+
+            <div class="footer-copyright">
+                © 2025 Abdo The Editor. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/js/all.min.js"></script>
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (header && window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else if (header) {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                // Ensure targetId is not just "#" to prevent errors
+                if (targetId && targetId.length > 1) {
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+
+        // Optimized video loading
+        document.addEventListener('DOMContentLoaded', () => {
+            const videoContainers = document.querySelectorAll('.video-container, .video-container-vertical');
+            
+            // Create a more aggressive intersection observer
+            const videoObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const iframe = entry.target.querySelector('iframe');
+                        if (iframe) {
+                            const src = iframe.getAttribute('src');
+                            if (src && !iframe.src) {
+                                // Add loading="eager" to visible videos
+                                iframe.loading = 'eager';
+                                iframe.src = src;
+                                // Add rel=0 to prevent related videos
+                                iframe.src = src + (src.includes('?') ? '&' : '?') + 'rel=0';
+                            }
+                            entry.target.classList.add('loaded');
+                        }
+                        // Unobserve after loading
+                        videoObserver.unobserve(entry.target);
+                    }
+                });
+            }, {
+                rootMargin: '200px 0px', // Increased margin to start loading earlier
+                threshold: 0.1
+            });
+
+            // Start observing all video containers
+            videoContainers.forEach(container => {
+                videoObserver.observe(container);
+            });
+
+            // Preload first video immediately
+            const firstVideo = videoContainers[0]?.querySelector('iframe');
+            if (firstVideo) {
+                const src = firstVideo.getAttribute('src');
+                if (src) {
+                    firstVideo.loading = 'eager';
+                    firstVideo.src = src + (src.includes('?') ? '&' : '?') + 'rel=0';
+                    videoContainers[0].classList.add('loaded');
+                }
+            }
+        });
+
+        // Optimize animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observerCallback = (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    requestAnimationFrame(() => {
+                        entry.target.style.opacity = '0';
+                        entry.target.style.animation = 'fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+                        observer.unobserve(entry.target);
+                    });
+                }
+            });
+        };
+        
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        // Observe elements for animation with performance optimization
+        requestAnimationFrame(() => {
+            document.querySelectorAll('.project-card, .testimonial-card, .hero-content, .section-header').forEach(el => {
+                if (el) {
+                    el.style.opacity = '0';
+                    el.style.willChange = 'transform, opacity';
+                    observer.observe(el);
+                }
+            });
+        });
+
+        // Spotlight card mouse tracking effect
+        const spotlightCard = document.getElementById('spotlightCard');
+        if (spotlightCard) {
+            spotlightCard.addEventListener('mousemove', (e) => {
+                const rect = spotlightCard.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                
+                spotlightCard.style.setProperty('--mouse-x', x + '%');
+                spotlightCard.style.setProperty('--mouse-y', y + '%');
+            });
+        }
+    </script>
+</body>
+</html>
